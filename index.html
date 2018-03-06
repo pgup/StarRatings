@@ -27,18 +27,51 @@
 
     .stars-outer::before{
         content:"\f005 \f005 \f005 \f005 \f005 ";
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: #ccc;
+    }
+
+    .stars-inner::before{
+        content:"\f005 \f005 \f005 \f005 \f005 ";
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: #f8ce0b;
     }
 </style>
 
 </head>
 <body>
     <div class="container">
+        <div class="form-group">
+            <select id="product-select" class="form-control custom-select">
+                <option value="0" disabled selected>
+                    Select Product
+                </option>
+                <option value="sony">Song 4k Tv</option>
+                <option value="samsung">Samsung 4k Tv</option>
+                <option value="vizio"> vizio</option>
+                <option value="panasonic">panasonic 4k Tv</option>
+                <option value="phillips">phillips 4k Tv</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="number" id="rating-control" class="form-control"
+            step="0.1" max="5" placeholder="Rate 1 - 5"
+            >
+
+        </div>
+
+
         <table class="table table-striped" >
             <thead>
+            <tr>
                 <th>4k Television</th>
                 <th>Rating</th>
+            </tr>
             </thead>
-        </table>
+        
         <tbody>
             <tr class="sony">
                 <td>Song 4k Tv</td>
@@ -86,6 +119,7 @@
                 </td>
             </tr>
         </tbody>
+    </table>
     </div>
     
     <script>
@@ -104,19 +138,56 @@
         // run getRatings when Dom loads
         document.addEventListener('DOMContentLoaded', getRatings);
 
+        //form elements
+        const productSelect = document.getElementById('product-select');
+        const ratingControl = document.getElementById('rating-control');
+        
+        let product;
+
+        //product select change
+        productSelect.addEventListener('change', (e) =>{
+            product = e.target.value;
+            //console.log(product);
+            //enable rating control
+            ratingControl.disabled = false;
+            ratingControl.value = ratings[product]
+        });
+
+        //Rating Control change 
+        ratingControl.addEventListener('blur',(e)=>{
+            const rating = e.target.value;
+
+            //make sure 5 or under
+            if(rating > 5) {
+                alert('pleace rate 1 - 5');
+                return;
+            }
+
+            //change rating
+            ratings[product] = rating;
+
+            getRatings();
+        });
+        
         //get ratings
         function getRatings(){
             for(let rating in ratings){
                 //console.log(ratings[rating]);
                 //get percentage
-                const StarPercentage = (ratings[rating]/startsTotal) * 100;
+                const starPercentage = (ratings[rating] / startsTotal) * 100;
+                //const starPercentage = (ratings[rating] / startsTotal) * 100;
 
                 // round to nearst 10
-                const StarPercentageRounded = `${Math.round(StarPercentage/10)*10}%`;
+                const starPercentageRounded = `${Math.round(starPercentage / 10) * 10}%`;
+                //const starPercentageRounded = `${Math.round(starPercentage / 10) * 10}%`;
 
                 //console.log(StarPercentageRounded);
                 // set width of stars-inner to perventage
-                document.querySelector(`.${rating}.stars-inner`).style.width = starPercentageRounded;
+                document.querySelector(`.${rating} .stars-inner`).style.width = starPercentageRounded;
+            
+            // add number rating
+                document.querySelector(`.${rating} .number-rating`).innerHTML = ratings[rating];
+
             }
         }
     </script>
